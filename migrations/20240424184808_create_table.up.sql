@@ -20,6 +20,7 @@ CREATE TABLE currencies (
 
 CREATE TABLE expenses (
        id SERIAL PRIMARY KEY,
+       description VARCHAR(1000),
        amount BIGINT NOT NULL,
        currency_id BIGINT NOT NULL,
        CONSTRAINT fk_currency_id FOREIGN KEY(currency_id) REFERENCES currencies(id),
@@ -29,7 +30,8 @@ CREATE TABLE expenses (
 CREATE TABLE user_to_expense (
        user_id BIGINT NOT NULL,
        expense_id BIGINT NOT NULL,
-       expense_proportion BIGINT NOT NULL,
+       proportion_owed BIGINT,
+       amount_paid BIGINT,
        CONSTRAINT fk_user_id FOREIGN KEY(user_id) REFERENCES users(id),
        CONSTRAINT fk_expense_id FOREIGN KEY(expense_id) REFERENCES expenses(id),
        PRIMARY KEY (user_id, expense_id)

@@ -10,7 +10,7 @@ default-run = "splitters"
 askama = { version = "0.12.1", features = ["with-axum"] }
 askama_axum = "0.4.0"
 axum = "0.7.5"
-sqlx = { version = "0.7.4", features = ["runtime-tokio", "tls-rustls"] }
+sqlx = { version = "0.7.4", features = ["runtime-tokio", "tls-rustls", "postgres"] }
 tokio = { version = "1.37.0", features = ["full"] }
 
 [[bin]]

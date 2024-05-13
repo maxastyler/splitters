@@ -17,6 +17,7 @@
               targets = ["x86_64-unknown-linux-gnu" "wasm32-unknown-unknown"];
             })
             sqlx-cli
+            trunk
           ];
           DATABASE_URL = "postgresql://postgres:postgres@127.0.0.1:5908/splitter";
         };

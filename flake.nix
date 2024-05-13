@@ -2,22 +2,17 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    rust-overlay.url = "github:oxalica/rust-overlay";
   };
-  outputs = { self, nixpkgs, flake-utils, rust-overlay }:
+  outputs = { self, nixpkgs, flake-utils}:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        overlays = [ (import rust-overlay) ];
-        pkgs = import nixpkgs { inherit system overlays; };
+        pkgs = import nixpkgs { inherit system; };
       in with pkgs; {
         devShells.default = mkShell {
           buildInputs = [
-            (rust-bin.stable.latest.default.override {
-              extensions = [ "rust-src" "rust-analyzer" ];
-              targets = ["x86_64-unknown-linux-gnu" "wasm32-unknown-unknown"];
-            })
-            sqlx-cli
-            trunk
+            elixir
+            elixir-ls
+            inotify-tools
           ];
           DATABASE_URL = "postgresql://postgres:postgres@127.0.0.1:5908/splitter";
         };

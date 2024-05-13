@@ -8,12 +8,13 @@ use crate::State;
 use axum::extract::State as ExtractState;
 
 async fn get_expense(pool: &PgPool, id: i32) -> Result<Expense> {
+    log::info!("Looking for id {}", id);
     let e = query!(
         r#"
 SELECT e.description, e.amount, ue.proportion_owed, ue.amount_paid, u.username, u.id
 FROM expenses e
 LEFT JOIN user_to_expense ue ON ue.expense_id = e.id
-JOIN users u ON ue.user_id = u.id
+LEFT JOIN users u ON ue.user_id = u.id
 WHERE e.id = $1
 "#,
         id
@@ -29,6 +30,7 @@ WHERE e.id = $1
             paid: r.amount_paid.unwrap_or(0),
         })
         .collect::<Vec<_>>();
+    log::info!("Got the length {}", e.len());
     let expense = e.into_iter().next().expect("oops");
 
     Ok(Expense {

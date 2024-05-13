@@ -1,6 +1,7 @@
 use gloo_net::http::Request;
 use yew::{platform::spawn_local, prelude::*};
 use yew_router::prelude::*;
+use data::Route;
 mod expense;
 
 use crate::expense::ExpenseView;
@@ -50,21 +51,12 @@ fn hello_server() -> Html {
     }
 }
 
-#[derive(Clone, Routable, PartialEq)]
-enum Route {
-    #[at("/")]
-    Home,
-    #[at("/hello-server")]
-    HelloServer,
-    #[at("/expense")]
-    Expense,
-}
 
 fn switch(routes: Route) -> Html {
     match routes {
         Route::Home => html! { <h1>{ "Hello Frontend" }</h1> },
         Route::HelloServer => html! {<HelloServer />},
-        Route::Expense => html! {<ExpenseView />},
+        Route::Expense { id } => html! {<ExpenseView id={id} />},
     }
 }
 

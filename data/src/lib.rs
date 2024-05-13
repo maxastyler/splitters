@@ -1,6 +1,18 @@
 use serde::{Serialize, Deserialize};
 use serde_json::Result as JSONResult;
 use sqlx::Type;
+use yew_router::Routable;
+
+#[derive(Clone, Routable, PartialEq)]
+pub enum Route {
+    #[at("/")]
+    Home,
+    #[at("/hello-server")]
+    HelloServer,
+    #[at("/expense/:id/")]
+    Expense { id: i32 },
+}
+
 
 #[derive(Serialize, Deserialize, Debug, Type)]
 pub struct ExpenseUser {

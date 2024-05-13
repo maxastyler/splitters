@@ -42,14 +42,44 @@ async fn insert_expenses(
         Vec::with_capacity(expenses.len()),
     );
     for (a, b, c) in expenses.into_iter() {
-	vecs.0.push(a);
-	vecs.1.push(b);
-	vecs.2.push(c);
+        vecs.0.push(a);
+        vecs.1.push(b);
+        vecs.2.push(c);
     }
     sqlx::query!(
         r#"INSERT INTO expenses(description, amount, currency_id) SELECT * FROM UNNEST($1::text[], $2::bigint[], $3::bigint[])"#,
         &vecs.0[..], &vecs.1[..], &vecs.2[..]
     ).execute(pool).await?;
+    Ok(())
+}
+
+async fn connect_users_and_expenses(pool: &PgPool) -> Result<(), sqlx::Error> {
+    let user_ids = get_user_ids(pool).await?;
+    let expense_ids = sqlx::query!(r#"SELECT id FROM expenses"#)
+        .fetch_all(pool)
+        .await?
+        .iter()
+        .map(|r| r.id)
+        .collect::<Vec<_>>();
+    sqlx::query!(
+        r#"INSERT INTO user_to_expense(user_id, expense_id, proportion_owed, amount_paid)
+SELECT * FROM UNNEST($1::int[], $2::int[], $3::bigint[], $4::bigint[])"#,
+        &vec![user_ids[0], user_ids[1]],
+        &vec![expense_ids[0], expense_ids[1]],
+	&vec![0; 2],
+	&vec![2; 2]
+    )
+    .execute(pool)
+    .await?;
+    Ok(())
+}
+
+async fn delete_all(pool: &PgPool) -> Result<(), sqlx::Error> {
+    sqlx::query!(r#"DELETE FROM user_to_expense"#).execute(pool).await?;
+    sqlx::query!(r#"DELETE FROM expenses"#).execute(pool).await?;
+    sqlx::query!(r#"DELETE FROM currencies"#).execute(pool).await?;    
+    sqlx::query!(r#"DELETE FROM friendships"#).execute(pool).await?;
+    sqlx::query!(r#"DELETE FROM users"#).execute(pool).await?;
     Ok(())
 }
 
@@ -60,10 +90,13 @@ async fn main() -> Result<(), sqlx::Error> {
         .max_connections(5)
         .connect(&db_url)
         .await?;
-    // insert_users(&pool, vec!["user 1".into(), "user 2".into()]).await?;
-    // insert_currency(&pool).await?;
+    delete_all(&pool).await?;
+    insert_users(&pool, vec!["user 1".into(), "user 2".into()]).await?;
+    insert_currency(&pool).await?;
     let c_id = get_currency_id(&pool).await?;
-    insert_expenses(&pool, vec![("cool expense".into(), 200, c_id)]).await?;
+    insert_expenses(&pool, vec![("cool expense".into(), 200, c_id),
+				("other expense".into(), 200, c_id)]).await?;
+    connect_users_and_expenses(&pool).await?;
     // println!("{:?}", get_users(&pool).await.unwrap());
     Ok(())
 }

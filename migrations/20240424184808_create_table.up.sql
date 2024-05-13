@@ -30,7 +30,7 @@ CREATE TABLE expenses (
 CREATE TABLE user_to_expense (
        user_id BIGINT NOT NULL,
        expense_id BIGINT NOT NULL,
-       proportion_owed BIGINT,
+       proportion_owed BIGINT NOT NULL,
        amount_paid BIGINT,
        CONSTRAINT fk_user_id FOREIGN KEY(user_id) REFERENCES users(id),
        CONSTRAINT fk_expense_id FOREIGN KEY(expense_id) REFERENCES expenses(id),

@@ -7,6 +7,7 @@ defmodule Splitters.Expenses do
   alias Splitters.Repo
 
   alias Splitters.Expenses.Currency
+  alias Splitters.Accounts.User
 
   @doc """
   Returns the list of currencies.
@@ -115,6 +116,19 @@ defmodule Splitters.Expenses do
   """
   def list_expenses do
     Repo.all(Expense)
+  end
+
+  @doc """
+  Returns the list of expenses for the given user
+  """
+  def list_expenses_for_user(%User{id: uid} = user) do
+    query =
+      from e in Expense,
+        join: ue in UserToExpense,
+        on: ue.expense_id == e.id,
+        where: ue.user_id == ^uid
+
+    Repo.all(query)
   end
 
   @doc """

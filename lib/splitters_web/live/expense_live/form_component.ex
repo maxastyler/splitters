@@ -21,7 +21,6 @@ defmodule SplittersWeb.ExpenseLive.FormComponent do
       >
         <.input field={@form[:description]} type="text" label="Description" />
         <.input field={@form[:amount]} type="number" label="Amount" />
-        <.input field={@form[:date]} type="datetime-local" label="Date" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Expense</.button>
         </:actions>

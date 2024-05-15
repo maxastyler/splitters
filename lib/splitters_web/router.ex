@@ -68,6 +68,11 @@ defmodule SplittersWeb.Router do
       on_mount: [{SplittersWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+      live "/expenses", ExpenseLive.Index, :index
+      live "/expenses/:id/edit", ExpenseLive.Index, :edit
+      live "/expenses/new", ExpenseLive.Index, :new
+      live "/expenses/:id", ExpenseLive.Show, :show
+      live "/expenses/:id/show/edit", ExpenseLive.Show, :edit
     end
   end
 

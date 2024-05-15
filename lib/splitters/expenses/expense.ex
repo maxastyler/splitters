@@ -4,8 +4,9 @@ defmodule Splitters.Expenses.Expense do
 
   schema "expenses" do
     field :amount, :integer
-    field :date, :utc_datetime
     field :description, :string
+
+    many_to_many :users, Splitters.Accounts.User, join_through: "user_to_expense"
 
     timestamps(type: :utc_datetime)
   end
@@ -13,7 +14,9 @@ defmodule Splitters.Expenses.Expense do
   @doc false
   def changeset(expense, attrs) do
     expense
-    |> cast(attrs, [:description, :amount, :date])
-    |> validate_required([:description, :amount, :date])
+    |> cast(attrs, [:description, :amount])
+    |> validate_required([:description, :amount])
+    |> cast_assoc(:users, required: true)
+
   end
 end

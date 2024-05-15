@@ -6,7 +6,7 @@ defmodule SplittersWeb.ExpenseLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :expenses, Expenses.list_expenses())}
+    {:ok, stream(socket, :expenses, Expenses.list_expenses_for_user(socket.assigns.current_user))}
   end
 
   @impl true
